@@ -4,15 +4,26 @@ import TodoInput from "./components/TodoInput";
 import "./components/Header.css";
 import { useState } from "react";
 import TodoItem from "./components/TodoItem";
+import { Todo } from "./types/Todo";
 
 function App() {
-  const todosArray: string[] = [];
-  const [todos, setTodos] = useState(todosArray);
+  const [todos, setTodos] = useState<Todo[]>([]);
   const addTodo = (todo: string) => {
-    setTodos((prev: string[]) => [...prev, todo]);
-    console.log(todos);
+    setTodos((prev: Todo[]) => [
+      ...prev,
+      { id: prev.length < 1 ? 0 : prev[prev.length - 1].id + 1, value: todo },
+    ]);
   };
-
+  const updateTodo = (id: number, value: string) => {
+    const index = todos.findIndex((todo) => todo.id === id);
+    if (index >= 0) {
+      const todo: Todo = { id, value };
+      setTodos((prev) => {
+        prev.splice(index, 1, todo);
+        return prev;
+      });
+    }
+  };
   return (
     <>
       <>
@@ -26,8 +37,8 @@ function App() {
           {todos.map((item, index) => (
             <TodoItem
               todo={item}
-              id={index.toString()}
               key={"todo" + index.toString()}
+              updateTodo={updateTodo}
             />
           ))}
         </div>
