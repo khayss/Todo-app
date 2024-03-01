@@ -25,7 +25,7 @@ function TodoInput(props: { addTodo: (params: string) => void }) {
             onChange={todoChangeHandler}
           />
         </div>
-        <input type="submit" value="add" />
+        <input type="submit" value="Add" />
       </form>
     </div>
   );

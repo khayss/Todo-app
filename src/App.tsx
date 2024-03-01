@@ -24,6 +24,11 @@ function App() {
       });
     }
   };
+  const handleDelete = (id: number) => {
+    console.log(id)
+    setTodos((prev) => prev.filter((item) => item.id !== id));
+    console.log(todos)
+  };
   return (
     <>
       <>
@@ -36,6 +41,7 @@ function App() {
         <div className="todo-container">
           {todos.map((item, index) => (
             <TodoItem
+              handleDelete={handleDelete}
               todo={item}
               key={"todo" + index.toString()}
               updateTodo={updateTodo}

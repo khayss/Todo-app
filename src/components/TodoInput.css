@@ -23,6 +23,11 @@ form input[type=text] {
     font-size: large;
 }
 
+form input[type=text]:focus {
+    outline: none;
+    background-color: EEF5FF;
+}
+
 form input[type=submit] {
     padding: 0 2rem;
     height: 5vh;
@@ -33,8 +38,10 @@ form input[type=submit] {
     font-size: large;
 }
 
+
 form input[type=submit]:hover {
     cursor: pointer;
+    opacity: 60%;
 }
 
 form>div {
