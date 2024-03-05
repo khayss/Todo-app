@@ -1,34 +1,42 @@
-import { ChangeEvent, FormEvent, useState } from "react";
-import "./TodoInput.css";
+import { ChangeEvent, FormEvent, FunctionComponent } from "react";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import { Todo } from "../types/Todo";
+import { TodoInputStyle } from "../utils/styles/TodoInputStyle";
+interface InputProps {
+  addTodo: () => void;
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  todo: Todo;
+  autoFocus: boolean;
+}
 
-function TodoInput(props: { addTodo: (params: string) => void }) {
-  const [todo, setTodo] = useState("");
-  const todoChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
-    setTodo(event.target.value);
-  };
+const TodoInput: FunctionComponent<InputProps> = (props) => {
   const formSubmitHandler = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (todo.length !== 0) props.addTodo(todo);
-    setTodo("");
+    props.addTodo();
   };
   return (
-    <div className="form-container">
-      <form onSubmit={formSubmitHandler}>
-        <div>
-          <label htmlFor="todo">
-            <h4>Enter a Todo</h4>
+    <div className="w-2/3">
+      <form onSubmit={formSubmitHandler} {...TodoInputStyle.formContainer}>
+        <div {...TodoInputStyle.inputContainer}>
+          <label htmlFor="todo" {...TodoInputStyle.label}>
+            Enter a Todo
           </label>
           <input
+            autoFocus={props.autoFocus}
             type="text"
             name="todo"
-            value={todo}
-            onChange={todoChangeHandler}
+            value={props.todo.value}
+            onChange={props.onChange}
+            {...TodoInputStyle.input}
           />
         </div>
-        <input type="submit" value="Add" />
+        <button type="submit" {...TodoInputStyle.submitBtn}>
+          <AddCircleOutlineIcon />
+          <span>add</span>
+        </button>
       </form>
     </div>
   );
-}
+};
 
 export default TodoInput;

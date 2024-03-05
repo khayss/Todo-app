@@ -1,56 +1,80 @@
-import "./App.css";
 import Header from "./components/Header";
 import TodoInput from "./components/TodoInput";
-import "./components/Header.css";
-import { useState } from "react";
+import {
+  FunctionComponent,
+  useReducer,
+  useState,
+  useEffect,
+  ChangeEvent,
+} from "react";
 import TodoItem from "./components/TodoItem";
 import { Todo } from "./types/Todo";
+import { reducer } from "./utils/functions/reducer";
+import { todoChangeHandler } from "./utils/functions/todoOnChangeHandler";
+import { TodoState } from "./types/TodoState";
+import EditTodo from "./components/EditTodo";
+import { addTodo } from "./utils/functions/addTodo";
+import { updateTodo } from "./utils/functions/updateTodo";
+import { handleDelete } from "./utils/functions/handleDelete";
+import { handleEdit } from "./utils/functions/handleEdit";
+import { AppStyle } from "./utils/styles/AppStyle";
+import Footer from "./components/Footer";
 
-function App() {
+const App: FunctionComponent = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
-  const addTodo = (todo: string) => {
-    setTodos((prev: Todo[]) => [
-      ...prev,
-      { id: prev.length < 1 ? 0 : prev[prev.length - 1].id + 1, value: todo },
-    ]);
+  const [editFocus, setEditFocus] = useState(false);
+  const [todo, dispatch] = useReducer(reducer, {
+    id: 0,
+    value: "",
+    isEditing: false,
+  });
+  useEffect(() => {
+    const length = todos.length;
+    dispatch({
+      type: TodoState.ID,
+      payload: length < 1 ? 0 : todos[length - 1].id + 1,
+    });
+  }, [todos]);
+
+  const todoInputProps = {
+    autoFocus: !editFocus,
+    addTodo: () => addTodo(todo, setTodos, dispatch),
+    onChange: (e: ChangeEvent<HTMLInputElement>) =>
+      todoChangeHandler(e, dispatch),
+    todo,
   };
-  const updateTodo = (id: number, value: string) => {
-    const index = todos.findIndex((todo) => todo.id === id);
-    if (index >= 0) {
-      const todo: Todo = { id, value };
-      setTodos((prev) => {
-        prev.splice(index, 1, todo);
-        return prev;
-      });
-    }
-  };
-  const handleDelete = (id: number) => {
-    console.log(id)
-    setTodos((prev) => prev.filter((item) => item.id !== id));
-    console.log(todos)
-  };
+
+  const todoItems = todos.map((item, index) =>
+    item.isEditing ? (
+      <EditTodo
+        autoFocus={editFocus}
+        key={index}
+        todo={item}
+        updateTodo={updateTodo(index, todos, setTodos)}
+        handleDelete={() => handleDelete(item.id, setTodos)}
+      />
+    ) : (
+      <TodoItem
+        handleDelete={() => handleDelete(item.id, setTodos)}
+        handleEdit={() => handleEdit(index, setTodos, setEditFocus)}
+        todo={item}
+        key={"todo" + index.toString()}
+      />
+    )
+  );
+
   return (
     <>
-      <>
-        <Header />
-      </>
-      <>
-        <TodoInput addTodo={addTodo} />
-      </>
-      <>
-        <div className="todo-container">
-          {todos.map((item, index) => (
-            <TodoItem
-              handleDelete={handleDelete}
-              todo={item}
-              key={"todo" + index.toString()}
-              updateTodo={updateTodo}
-            />
-          ))}
+      <Header />
+      <div {...AppStyle.mainTodoDiv}>
+        <div {...AppStyle.minTodoDiv}>
+          <TodoInput {...todoInputProps} />
+          <div {...AppStyle.todoItemsDiv}>{todoItems}</div>
         </div>
-      </>
+      </div>
+      <Footer />
     </>
   );
-}
+};
 
 export default App;
