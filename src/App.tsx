@@ -19,21 +19,24 @@ import { handleDelete } from "./utils/functions/handleDelete";
 import { handleEdit } from "./utils/functions/handleEdit";
 import { AppStyle } from "./utils/styles/AppStyle";
 import Footer from "./components/Footer";
+import { divClickHandler } from "./utils/functions/divClickHandler";
 
 const App: FunctionComponent = () => {
-  const [todos, setTodos] = useState<Todo[]>([]);
+  const [todos, setTodos] = useState<Todo[]>(
+    Array.isArray(JSON.parse(localStorage.getItem("todos")!))
+      ? (JSON.parse(localStorage.getItem("todos")!) as Todo[])
+      : []
+  );
   const [editFocus, setEditFocus] = useState(false);
-  const [todo, dispatch] = useReducer(reducer, {
-    id: 0,
-    value: "",
-    isEditing: false,
-  });
+  const [todo, dispatch] = useReducer(reducer, new Todo(0, "", false, false));
+
   useEffect(() => {
     const length = todos.length;
     dispatch({
       type: TodoState.ID,
       payload: length < 1 ? 0 : todos[length - 1].id + 1,
     });
+    localStorage.setItem("todos", JSON.stringify(todos));
   }, [todos]);
 
   const todoInputProps = {
@@ -44,8 +47,10 @@ const App: FunctionComponent = () => {
     todo,
   };
 
-  const todoItems = todos.map((item, index) =>
-    item.isEditing ? (
+  const todoItems = todos.map((item, index) => {
+    // if (item instanceof Todo) {
+    console.log(item instanceof Todo);
+    return item.isEditing ? (
       <EditTodo
         autoFocus={editFocus}
         key={index}
@@ -59,9 +64,12 @@ const App: FunctionComponent = () => {
         handleEdit={() => handleEdit(index, setTodos, setEditFocus)}
         todo={item}
         key={"todo" + index.toString()}
+        divClickHandler={() => divClickHandler(index, setTodos)}
+        isChecked={item.isChecked}
       />
-    )
-  );
+    );
+    // }
+  });
 
   return (
     <>

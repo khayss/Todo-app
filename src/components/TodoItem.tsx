@@ -5,19 +5,18 @@ import { TodoItemProps } from "../types/TodoItemProps";
 import { TodoItemStyle } from "../utils/styles/TodoItemStyle";
 
 const TodoItem: FunctionComponent<TodoItemProps> = (props) => {
-  const divClickHandler = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    const div = e.target as HTMLDivElement;
-    div.classList.toggle("opacity-50");
-    (div.childNodes[0] as HTMLParagraphElement).classList.toggle(
-      "line-through"
-    );
-  };
   return (
-    <div {...TodoItemStyle.mainTodoItemsContainer}>
-      <div {...TodoItemStyle.todoContainer} onClick={divClickHandler}>
+    <div
+      {...(props.isChecked
+        ? TodoItemStyle.mainTodoItemsContainerChecked
+        : TodoItemStyle.mainTodoItemsContainer)}
+    >
+      <div {...TodoItemStyle.todoContainer} onClick={props.divClickHandler}>
         <p
           id={"todo-item-" + props.todo.id.toString()}
-          {...TodoItemStyle.todoText}
+          {...(props.isChecked
+            ? TodoItemStyle.todoTextChecked
+            : TodoItemStyle.todoText)}
         >
           {props.todo.value}
         </p>

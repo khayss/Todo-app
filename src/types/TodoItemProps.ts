@@ -4,4 +4,6 @@ export interface TodoItemProps {
   updateTodo?: (id: number, value: string) => void;
   handleDelete: () => void;
   handleEdit: () => void;
+  divClickHandler: () => void;
+  isChecked: boolean;
 }

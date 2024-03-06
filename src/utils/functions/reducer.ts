@@ -10,7 +10,7 @@ export const reducer = (todo: Todo, action: Action): Todo => {
     case "EDIT":
       return { ...todo, isEditing: action.payload };
     case "RESET":
-      return { id: 0, value: "", isEditing: false };
+      return new Todo(0, "", false, false);
     default:
       return todo;
   }
