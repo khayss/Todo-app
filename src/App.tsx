@@ -20,15 +20,17 @@ import { handleEdit } from "./utils/functions/handleEdit";
 import { AppStyle } from "./utils/styles/AppStyle";
 import Footer from "./components/Footer";
 import { divClickHandler } from "./utils/functions/divClickHandler";
+import { getLocalStorage } from "./utils/functions/getLocalStorage";
 
 const App: FunctionComponent = () => {
-  const [todos, setTodos] = useState<Todo[]>(
-    Array.isArray(JSON.parse(localStorage.getItem("todos")!))
-      ? (JSON.parse(localStorage.getItem("todos")!) as Todo[])
-      : []
-  );
+  const [todos, setTodos] = useState<Todo[]>(getLocalStorage("todos"));
   const [editFocus, setEditFocus] = useState(false);
-  const [todo, dispatch] = useReducer(reducer, new Todo(0, "", false, false));
+  const [todo, dispatch] = useReducer(reducer, {
+    id: 0,
+    value: "",
+    isChecked: false,
+    isEditing: false,
+  });
 
   useEffect(() => {
     const length = todos.length;
@@ -48,27 +50,31 @@ const App: FunctionComponent = () => {
   };
 
   const todoItems = todos.map((item, index) => {
-    // if (item instanceof Todo) {
-    console.log(item instanceof Todo);
-    return item.isEditing ? (
-      <EditTodo
-        autoFocus={editFocus}
-        key={index}
-        todo={item}
-        updateTodo={updateTodo(index, todos, setTodos)}
-        handleDelete={() => handleDelete(item.id, setTodos)}
-      />
-    ) : (
-      <TodoItem
-        handleDelete={() => handleDelete(item.id, setTodos)}
-        handleEdit={() => handleEdit(index, setTodos, setEditFocus)}
-        todo={item}
-        key={"todo" + index.toString()}
-        divClickHandler={() => divClickHandler(index, setTodos)}
-        isChecked={item.isChecked}
-      />
-    );
-    // }
+    if (
+      typeof item.id === "number" &&
+      typeof item.value === "string" &&
+      typeof item.isEditing === "boolean" &&
+      typeof item.isChecked === "boolean"
+    ) {
+      return item.isEditing ? (
+        <EditTodo
+          autoFocus={editFocus}
+          key={index}
+          todo={item}
+          updateTodo={updateTodo(index, setTodos)}
+          handleDelete={() => handleDelete(item.id, setTodos)}
+        />
+      ) : (
+        <TodoItem
+          handleDelete={() => handleDelete(item.id, setTodos)}
+          handleEdit={() => handleEdit(index, setTodos, setEditFocus)}
+          todo={item}
+          key={"todo" + index.toString()}
+          divClickHandler={() => divClickHandler(index, setTodos)}
+          isChecked={item.isChecked}
+        />
+      );
+    }
   });
 
   return (

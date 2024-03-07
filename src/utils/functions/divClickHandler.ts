@@ -2,16 +2,15 @@ import { Dispatch, SetStateAction } from "react";
 import { Todo } from "../../types/Todo";
 
 export const divClickHandler = (
-  index: number,
+  itemIndex: number,
   setTodos: Dispatch<SetStateAction<Todo[]>>
 ) => {
   setTodos((prev) => {
-    const item = prev[index];
-    const items = [...prev];
-    items.splice(index, 1, {
-      ...item,
-      isChecked: item.isChecked ? false : true,
+    return prev.map((item, index) => {
+      if (index === itemIndex) {
+        return { ...item, isChecked: !item.isChecked };
+      }
+      return { ...item };
     });
-    return items;
   });
 };

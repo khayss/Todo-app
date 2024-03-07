@@ -7,7 +7,8 @@ export const handleDelete = (
 ) => {
   setTodos((prev) =>
     prev.map((item) => {
-      return { ...item, isEditing: false };
+      item.isEditing = false;
+      return { ...item };
     })
   );
   setTodos((prev) => prev.filter((item) => item.id !== id));

@@ -9,16 +9,12 @@ export const handleEdit = (
   setEditFocus(true);
   setTodos((prev) =>
     prev.map((item) => {
-      return { ...item, isEditing: false };
+      item.isEditing = false;
+      return { ...item };
     })
   );
   setTodos((prev) => {
-    const item = prev[index];
-    const items = [...prev];
-    items.splice(index, 1, {
-      ...item,
-      isEditing: item.isEditing ? false : true,
-    });
-    return items;
+    prev[index].isEditing = true;
+    return [...prev];
   });
 };
